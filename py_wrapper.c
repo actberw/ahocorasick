@@ -8,6 +8,8 @@
 
 
 #include <Python.h>
+#include <string.h>
+//#include <stdio.h>
 #include "structmember.h"
 #include "aho-corasick.h"
 
@@ -145,21 +147,21 @@ ahocorasick_KeywordTree_basesearch(ahocorasick_KeywordTree *self,
 				   ahocorasick_KeywordTree_search_helper_t helper) {
 	unsigned char *queryString;
 	static char *kwlist[] = {"query", "startpos", "initstate", NULL};
-	int startpos = 0;
+	size_t startpos = 0;
 	PyObject *initial_state_pyobj = Py_None;
 	aho_corasick_state_t *initial_state;
-	int n;		/* length of queryString */
+	size_t n;		/* length of queryString */
 	size_t start, end;	/* used for out-params of the search */
 	aho_corasick_state_t *last_state; /* used as out-param of the search */
 	PyObject *last_state_pyobj;	  /* temporary for turning primitive
 					     state to pyobj. */
 	if (! PyArg_ParseTupleAndKeywords
-	    (args, kwargs, "s#|iO!", kwlist, &queryString, &n, &startpos,
+	    (args, kwargs, "s|iO!", kwlist, &queryString, &startpos,
 	     &ahocorasick_StateType, &initial_state_pyobj)) {
 		return NULL;
 	}
-    //fprintf(stderr, "queryString: %s, n: %ld, startpos: %ld\n", queryString, n, startpos);
-
+        //fprintf(stderr, "queryString: %s, n: %ld, startpos: %ld\n", queryString, n, startpos);
+	n = strlen(queryString);
 	/* Check startpos bounds.  Assert that they're within the query
 	   string. */
 	if (startpos < 0) {
